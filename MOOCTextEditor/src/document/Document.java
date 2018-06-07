@@ -62,13 +62,40 @@ public abstract class Document {
 	 *       is not considered a syllable unless the word has no other syllables. 
 	 *       You should consider y a vowel.
 	 */
-	protected int countSyllables(String word)
+	/*protected int countSyllables(String word)
 	{
 		// TODO: Implement this method so that you can call it from the 
 	    // getNumSyllables method in BasicDocument (module 2) and 
 	    // EfficientDocument (module 3).
-	    return 0;
-	}
+		int lone_e = 0;
+		int total_e= 0;
+		int vowels = 0;
+		int total_syllables = 0;
+		if (word != null && word.length() > 0 && word.charAt(word.length() - 1) == 'e' || word.charAt(word.length() - 1) == 'E' ) 
+		{
+			//word = word.substring(0, word.length() - 1);
+			String without_e = word;
+			lone_e++;
+			int middle_e = 0;
+			for( int i=0; i<without_e.length(); i++ ) {
+			    if( without_e.charAt(i) == 'e' || without_e.charAt(i) == 'E'  ) {
+			    	middle_e++;
+			    } 
+			}
+			  total_e = lone_e + middle_e;
+	    }
+		List<String> tokens = getTokens("[aeiouyAEIOUY]+");
+		vowels = tokens.size();
+	    
+		return (vowels - total_e);
+	    
+	    
+		
+	 
+	}*/
+	
+
+	
 	
 	/** A method for testing
 	 * 
@@ -132,7 +159,13 @@ public abstract class Document {
 	{
 	    // TODO: You will play with this method in week 1, and 
 		// then implement it in week 2
-	    return text.length();
+		double number_words = getNumWords();		
+		double number_sentences = getNumSentences();
+		double number_syllables = getNumSyllables();
+		
+		double score = 206.835 - 1.015*(number_words/number_sentences) - 84.6*(number_syllables/number_words);
+		
+	    return score;
 	}
 	
 	
