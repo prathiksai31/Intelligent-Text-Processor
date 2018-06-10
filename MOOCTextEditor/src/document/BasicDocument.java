@@ -64,6 +64,8 @@ public class BasicDocument extends Document
 		List<String> sentences = getTokens("([^.!?\\s][^.!?]*)");
 		//words = BasicDocument.getTokens("([A-Z])");
 	    return sentences.size();
+	    
+	    
         
 	}
 	

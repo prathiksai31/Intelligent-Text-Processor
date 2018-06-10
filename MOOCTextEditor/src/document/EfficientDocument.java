@@ -11,9 +11,9 @@ import java.util.List;
  */
 public class EfficientDocument extends Document {
 
-	private int numWords;  // The number of words in the document
-	private int numSentences;  // The number of sentences in the document
-	private int numSyllables;  // The number of syllables in the document
+	private int numWords = 0;  // The number of words in the document
+	private int numSentences = 0;  // The number of sentences in the document
+	private int numSyllables = 0;  // The number of syllables in the document
 	
 	public EfficientDocument(String text)
 	{
@@ -38,6 +38,14 @@ public class EfficientDocument extends Document {
 		return !(tok.indexOf("!") >=0 || tok.indexOf(".") >=0 || tok.indexOf("?")>=0);
 	}
 	
+	//private boolean isSentence(String sentence)
+	//{
+	    // Note: This is a fast way of checking whether a string is a word
+	    // You probably don't want to change it.
+		//String new_sentence = sent + ".";
+		//return (sentence.indexOf(".") >=0 );
+	//}
+	
 	
     /** Passes through the text one time to count the number of words, syllables 
      * and sentences, and set the member variables appropriately.
@@ -50,11 +58,63 @@ public class EfficientDocument extends Document {
 		// That is not a word or a sentence-ending puctuation.
 		// MAKE SURE YOU UNDERSTAND THIS LINE BEFORE YOU CODE THE REST
 		// OF THIS METHOD.
+		//List<String> tokens = getTokens("[^.!?\\\\s][^.!?]*+|[a-zA-Z]+");
 		List<String> tokens = getTokens("[!?.]+|[a-zA-Z]+");
+		//if(tokens.lastIndexOf(".") == -1 && tokens.lastIndexOf("?") == -1 && tokens.lastIndexOf("!") == -1) 
+		//{
+			//tokens.add(".?!");
+			//}
+		//System.out.println(tokens.size());
+		String last = "";
+		//tokens.set(tokens.size() - 1, tokens.get(tokens.size() - 1) + "s");
+		
+		
+		numSentences = 0;
+		numSyllables = 0;
+		for(String word : tokens) {
+			
+			numSyllables += countSyllables(word);
+			//String sent = word.concat("....");
+			//System.out.println(sent);
+			//if(tokens.size() == 1) {numSentences+=1;}
+			if(isWord(word)) {
+				numWords++;	
+			}
+			
+			
+			else if (!(isWord(word)) && numWords>0  ){numSentences+=1;}
+			//System.out.println(word.contains("."));
+			
+			last = word;
+		}
+			
+		//	if(!(isWord(word)))  {
+			//	numSentences+=1;
+				
+				//}
+			
+			 if (isWord(last) && numWords>0 ) {
+				 numSentences+=1; 
+			 }
+			 
+			
+		
+		
+		
+		}
+		//List<String> words = getTokens("([A-Za-z]+)");
+		//List<String> sentences = getTokens("([^.!?\\s][^.!?]*)");
+		//List<String> vowels = getTokens("[aeiouyAEIOUY]+");
+		//List<String> loneEs = getTokens("[^aeiouyAEIOUY]+[eE]\\b");
+		//List<String> singleEs = getTokens("\\b[^aeiouyAEIOUY]*[eE]\\b");
+		
+		
+		
+		
 		
 		// TODO: Finish this method.  Remember the countSyllables method from 
 		// Document.  That will come in handy here.  isWord defined above will also help.
-	}
+	
 
 	
 	/**
@@ -73,7 +133,7 @@ public class EfficientDocument extends Document {
 	@Override
 	public int getNumSentences() {
 		//TODO: write this method.  Hint: It's simple
-		return 0;
+		return numSentences;
 	}
 
 	
@@ -94,7 +154,7 @@ public class EfficientDocument extends Document {
 	@Override
 	public int getNumWords() {
 		//TODO: write this method.  Hint: It's simple
-	    return 0;
+	    return numWords;
 	}
 
 
@@ -116,7 +176,14 @@ public class EfficientDocument extends Document {
 	@Override
 	public int getNumSyllables() {
         //TODO: write this method.  Hint: It's simple
-        return 0;
+		
+		//List<String> vowels = getTokens("[aeiouyAEIOUY]+");
+		//List<String> loneEs = getTokens("[^aeiouyAEIOUY]+[eE]\\b");
+		//List<String> singleEs = getTokens("\\b[^aeiouyAEIOUY]*[eE]\\b");
+		
+		
+		//return vowels.size() - (loneEs.size() - singleEs.size());
+        return numSyllables;
 	}
 	
 	// Can be used for testing
