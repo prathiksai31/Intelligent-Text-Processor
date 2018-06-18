@@ -1,9 +1,12 @@
 package spelling;
 
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 /** 
@@ -40,7 +43,30 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	public boolean addWord(String word)
 	{
 	    //TODO: Implement this method.
-	    return false;
+		String lowercase = word.toLowerCase();
+		char[] characters = lowercase.toCharArray();
+		TrieNode new_trie = new TrieNode();
+		new_trie = root;
+		Set<Character> new_links = new HashSet<Character>();
+		for(char temp : characters) {
+			new_links = new_trie.getValidNextCharacters();
+			if(new_links.contains(temp)) {
+				new_trie = new_trie.getChild(temp);	
+			}
+			else { 
+				new_trie = new_trie.insert(temp);	
+			}
+			//size++;
+		}
+		if(new_trie.endsWord()) {
+			return false;
+		}
+		else {
+			new_trie.setEndsWord(true);
+			size++;
+			return true;
+		}
+	    
 	}
 	
 	/** 
@@ -50,7 +76,7 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	public int size()
 	{
 	    //TODO: Implement this method
-	    return 0;
+	    return size;
 	}
 	
 	
@@ -60,6 +86,24 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	public boolean isWord(String s) 
 	{
 	    // TODO: Implement this method
+		String lowercase = s.toLowerCase();
+		char[] characters = lowercase.toCharArray();
+		TrieNode new_trie = new TrieNode();
+		new_trie = root;
+		Set<Character> new_links = new HashSet<Character>();
+		for(char temp : characters) {
+			new_links = new_trie.getValidNextCharacters();
+			if(new_links.contains(new_trie)) {
+				new_trie = new_trie.getChild(temp);	
+				
+			}
+			else {return false;}
+		}
+			if(new_trie.endsWord()) {
+				return true;
+			}
+			//else {}
+		
 		return false;
 	}
 
@@ -101,7 +145,38 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
     	 //       Add all of its child nodes to the back of the queue
     	 // Return the list of completions
     	 
-         return null;
+    	String lowercase = prefix.toLowerCase();
+ 		char[] characters = lowercase.toCharArray();
+ 		TrieNode new_trie = new TrieNode();
+ 		new_trie = root;
+ 		Set<Character> new_links = new HashSet<Character>();
+ 		List<String> completions = new ArrayList<String>();
+ 		for(char temp : characters) {
+			new_links = new_trie.getValidNextCharacters();
+			if(new_links.contains(new_trie)) {
+				new_trie = new_trie.getChild(temp);	
+ 		
+			}
+			else {return completions;}
+			Queue<TrieNode> queue = new LinkedList<TrieNode>();
+	 		queue.add(new_trie);
+	 		
+	 		while(numCompletions > 0 && !queue.isEmpty()) {
+	 			new_trie = queue.remove();
+	 			if(new_trie.endsWord()) {
+	 				completions.add(new_trie.getText());
+	 				numCompletions--;
+	 			}
+ 		}
+	 		TrieNode next = null;
+	 		for(Character c : new_trie.getValidNextCharacters()) {
+	 			next = new_trie.getChild(c);
+	 			}
+	 		if(next != null) {
+					queue.add(next);
+				}
+	 		}
+         return completions;
      }
 
  	// For debugging
