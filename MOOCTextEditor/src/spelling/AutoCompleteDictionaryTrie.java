@@ -85,6 +85,9 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	@Override
 	public boolean isWord(String s) 
 	{
+		if(s == null) {
+			return false;
+		}
 	    // TODO: Implement this method
 		String lowercase = s.toLowerCase();
 		char[] characters = lowercase.toCharArray();
@@ -93,7 +96,7 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 		Set<Character> new_links = new HashSet<Character>();
 		for(char temp : characters) {
 			new_links = new_trie.getValidNextCharacters();
-			if(new_links.contains(new_trie)) {
+			if(new_links.contains(temp)) {
 				new_trie = new_trie.getChild(temp);	
 				
 			}
@@ -144,41 +147,45 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
     	 //       If it is a word, add it to the completions list
     	 //       Add all of its child nodes to the back of the queue
     	 // Return the list of completions
+    	 String prefixToCheck = prefix.toLowerCase();
+    	 List<String> result = new LinkedList<String>();
+    	 TrieNode node = root;
+    	 for (int i = 0; i < prefixToCheck.length(); i++) {
+    		 char c = prefixToCheck.charAt(i);
+    		 if (node.getValidNextCharacters().contains(c)) {
+ 				node = node.getChild(c);
+ 			} else {
+ 				return result;
+ 			}
+    	 }
+    	 int count = 0;
+    	 if (node.endsWord()) {
+    		 result.add(node.getText());
+    		 count++;
+    	 }
     	 
-    	String lowercase = prefix.toLowerCase();
- 		char[] characters = lowercase.toCharArray();
- 		TrieNode new_trie = new TrieNode();
- 		new_trie = root;
- 		Set<Character> new_links = new HashSet<Character>();
- 		List<String> completions = new ArrayList<String>();
- 		for(char temp : characters) {
-			new_links = new_trie.getValidNextCharacters();
-			if(new_links.contains(new_trie)) {
-				new_trie = new_trie.getChild(temp);	
- 		
-			}
-			else {return completions;}
-			Queue<TrieNode> queue = new LinkedList<TrieNode>();
-	 		queue.add(new_trie);
-	 		
-	 		while(numCompletions > 0 && !queue.isEmpty()) {
-	 			new_trie = queue.remove();
-	 			if(new_trie.endsWord()) {
-	 				completions.add(new_trie.getText());
-	 				numCompletions--;
-	 			}
- 		}
-	 		TrieNode next = null;
-	 		for(Character c : new_trie.getValidNextCharacters()) {
-	 			next = new_trie.getChild(c);
-	 			}
-	 		if(next != null) {
-					queue.add(next);
-				}
-	 		}
-         return completions;
+    	 List<TrieNode> nodeQueue = new LinkedList<TrieNode>();
+    	 List<Character> childrenC = new LinkedList<Character>(node.getValidNextCharacters());
+    	 
+    	 for (int i = 0; i < childrenC.size(); i++) {
+    		 char c = childrenC.get(i);
+    		 nodeQueue.add(node.getChild(c));
+    	 }
+    	 while (!nodeQueue.isEmpty() && count < numCompletions) {
+    		 TrieNode tn = nodeQueue.remove(0);
+    		 if (tn.endsWord()) {
+    			 result.add(tn.getText());
+    			 count++;
+    		 }
+    		 
+    		 List<Character> cs = new LinkedList<Character>(tn.getValidNextCharacters());
+        	 for (int i = 0; i < cs.size(); i++) {
+        		 char c = cs.get(i);
+        		 nodeQueue.add(tn.getChild(c));
+        	 }
+    	 }
+         return result;
      }
-
  	// For debugging
  	public void printTree()
  	{
